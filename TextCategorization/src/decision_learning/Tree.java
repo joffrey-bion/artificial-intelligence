@@ -16,8 +16,9 @@ public class Tree {
      * Creates an internal node representing the given word.
      */
     public Tree(String word) {
-        if (word == null)
+        if (word == null) {
             throw new RuntimeException("Cannot create a tree (node) from a null word");
+        }
         this.word = word;
         this.category = null;
     }
@@ -26,24 +27,27 @@ public class Tree {
      * Creates a leaf representing the given category.
      */
     public Tree(Integer category) {
-        if (category == null)
+        if (category == null) {
             throw new RuntimeException("Cannot create a tree (leaf) from a null category");
+        }
         this.word = null;
         this.category = category;
     }
 
     public int size() {
-        if (isLeaf())
+        if (isLeaf()) {
             return 1;
-        else
+        } else {
             return 1 + left.size() + right.size();
+        }
     }
 
     public int nbAttributes() {
-        if (isLeaf())
+        if (isLeaf()) {
             return 0;
-        else
+        } else {
             return 1 + left.nbAttributes() + right.nbAttributes();
+        }
     }
 
     /**
@@ -62,10 +66,11 @@ public class Tree {
      *            The subtree we want to attach.
      */
     public void setChild(boolean value, Tree subtree) {
-        if (value)
+        if (value) {
             left = subtree;
-        else
+        } else {
             right = subtree;
+        }
     }
 
     /**
@@ -76,18 +81,20 @@ public class Tree {
      * @return The subtree pointed by the branch labeled by {@code value}.
      */
     public Tree getChild(boolean value) {
-        if (value)
+        if (value) {
             return left;
-        else
+        } else {
             return right;
+        }
     }
 
     /**
      * Returns the word represented by this node. Works only on internal nodes.
      */
     public String getWord() {
-        if (isLeaf())
+        if (isLeaf()) {
             throw new RuntimeException("A leaf is not a word");
+        }
         return word;
     }
 
@@ -95,8 +102,9 @@ public class Tree {
      * Returns the category represented by this node. Works only on leaves.
      */
     public Integer getCategory() {
-        if (!isLeaf())
+        if (!isLeaf()) {
             throw new RuntimeException("Only leaves are categories");
+        }
         return category;
     }
 
@@ -108,15 +116,16 @@ public class Tree {
      * @return The Integer representing the category.
      */
     public Integer decideCategory(Article a) {
-        if (isLeaf())
+        if (isLeaf()) {
             return category;
-        else
+        } else {
             return getChild(a.contains(word)).decideCategory(a);
+        }
     }
 
     /*
-     * Fancy printing methods 
-     * (Actually not fancy anymore because unicode characters were removed)
+     * Fancy printing methods (Actually not fancy anymore because unicode characters
+     * were removed)
      */
 
     private final char branch = '├';
@@ -132,19 +141,22 @@ public class Tree {
             res += "<" + Category.getName(category) + ">";
         } else {
             res += "[" + word + "]\n";
-            if (left == null)
+            if (left == null) {
                 res += indL + "null";
-            else
+            } else {
                 res += left.toString(indL);
+            }
             res += "\n";
-            if (right == null)
+            if (right == null) {
                 res += indR + "null";
-            else
+            } else {
                 res += right.toString(indR);
+            }
         }
         return res;
     }
 
+    @Override
     public String toString() {
         return toString("");
     }

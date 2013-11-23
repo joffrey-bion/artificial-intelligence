@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 
 import bayesian_learning.BayesianNetwork;
-
 import data.ArticleSet;
 import data.Data;
 import decision_learning.DecisionLearning;
@@ -60,8 +59,9 @@ public class Main {
         }
         System.out.println("\n    max # nodes: " + nbNodes);
         Tree dtl = DecisionLearning.DTL(trainArticles, words, nbNodes, prioType);
-        if (print)
+        if (print) {
             printTest(treeName, dtl);
+        }
         return dtl;
     }
 

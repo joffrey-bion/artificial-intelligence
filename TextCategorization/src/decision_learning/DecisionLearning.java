@@ -9,7 +9,7 @@ public class DecisionLearning {
     private static final int LEAF_PRIORITY = -1;
 
     private static String pickedNodes;
-        
+
     /**
      * Learn a decision tree from the set of examples and attributes (words).
      * 
@@ -18,21 +18,24 @@ public class DecisionLearning {
      * @param words
      *            The list of words (attributes) to consider potentially
      * @param maxNbNodes
-     *            The maximum number of internal nodes in the tree, corresponding to how many
-     *            attributes will be considered
+     *            The maximum number of internal nodes in the tree, corresponding to
+     *            how many attributes will be considered
      * @param prioType
-     *            The way to compute the priority of the nodes : {@code false} to use best IG only,
-     *            {@code true} to use best IG times number of examples
+     *            The way to compute the priority of the nodes : {@code false} to use
+     *            best IG only, {@code true} to use best IG times number of examples
      * @return The root of the decision tree.
      */
     public static Tree DTL(ArticleSet examples, LinkedList<String> words, int maxNbNodes,
             boolean prioType) {
-        if (maxNbNodes < 0)
+        if (maxNbNodes < 0) {
             throw new IllegalArgumentException("The number of nodes must be positive");
-        if (examples.isEmpty())
+        }
+        if (examples.isEmpty()) {
             return new Tree(data.Category.random());
-        if (maxNbNodes == 0)
+        }
+        if (maxNbNodes == 0) {
             return new Tree(examples.mode());
+        }
         FutureTreeQueue queue = new FutureTreeQueue();
         Tree root = null;
         queue.offer(createFutureNode(null, true, examples, words, prioType));
@@ -47,7 +50,8 @@ public class DecisionLearning {
             rememberPickedNode(ft, newNode, nbNodes);
             // expand the new node
             if (!newNode.isLeaf()) {
-                // remove word from the list of available words for the children of the new node
+                // remove word from the list of available words for the children of
+                // the new node
                 LinkedList<String> newWords = new LinkedList<>(ft.getWords());
                 newWords.remove(newNode.getWord());
                 // add the children to the queue, with new sets of examples
@@ -56,7 +60,8 @@ public class DecisionLearning {
                 queue.offer(createFutureNode(newNode, false, examplesSub[1], newWords, prioType));
             }
         }
-        // attach leaves to the last branches, according to the mode of the underlying examples
+        // attach leaves to the last branches, according to the mode of the
+        // underlying examples
         while (!queue.isEmpty()) {
             FutureTree ft = queue.poll();
             Tree newNode = ft.toLeaf();
@@ -98,7 +103,8 @@ public class DecisionLearning {
      * Attach the new node to the tree 'root', or create the tree from the new node.
      * 
      * @param root
-     *            The root of the current tree (may be {@code null} if the new node is the first)
+     *            The root of the current tree (may be {@code null} if the new node
+     *            is the first)
      * @param ft
      *            The FutureTree object used to create the new node.
      * @param newNode
@@ -114,14 +120,14 @@ public class DecisionLearning {
         return root;
     }
 
-    
     private static void resetPickedNodes() {
         pickedNodes = "";
     }
 
     private static void rememberPickedNode(FutureTree ft, Tree t, int nbNodes) {
-        if (nbNodes > 10)
+        if (nbNodes > 10) {
             return;
+        }
         pickedNodes += nbNodes + ". picked node: " + ft;
         if (ft.getParent() == null) {
             pickedNodes += "  (root)";

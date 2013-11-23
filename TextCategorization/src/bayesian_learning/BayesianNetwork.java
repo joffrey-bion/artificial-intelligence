@@ -19,18 +19,23 @@ public class BayesianNetwork {
     private LinkedList<String> allWords;
 
     /**
-     * Creates a Naive Bayes Model containing all the words, and computes the parameters according
-     * to the statistics in the given set of examples.
+     * Creates a Naive Bayes Model containing all the words, and computes the
+     * parameters according to the statistics in the given set of examples.
+     * 
+     * @param examples
+     *            The examples used by the network to make decisions
+     * @param words
+     *            The list of possible words to find in the articles
      */
     public BayesianNetwork(ArticleSet examples, LinkedList<String> words) {
         allWords = words;
         // setting prior probability of category 1
-        int categoryCount[] = examples.categoryCount();
+        int categoryCount[] = examples.getCategoriesCounts();
         priorProbability1 = (double) categoryCount[0] / examples.size();
         // setting conditional probabilities
-        conditionalProbabilities1 = new HashMap<String, Double>();
-        conditionalProbabilities2 = new HashMap<String, Double>();
-        ArticleSet catPartition[] = examples.categoryPartition();
+        conditionalProbabilities1 = new HashMap<>();
+        conditionalProbabilities2 = new HashMap<>();
+        ArticleSet catPartition[] = examples.getCategoryPartition();
         for (String word : words) {
             ArticleSet wordPartition[] = catPartition[0].partition(word);
             double p1 = (double) (wordPartition[0].size() + 1) / (catPartition[0].size() + 2);
@@ -42,6 +47,10 @@ public class BayesianNetwork {
 
     /**
      * Returns the most likely category for the given article.
+     * 
+     * @param a
+     *            The article to decide the category for
+     * @return the most likely category for the given article.
      */
     public int decideCategory(Article a) {
         double product1 = priorProbability1;
@@ -55,7 +64,7 @@ public class BayesianNetwork {
                 product2 *= 1 - conditionalProbabilities2.get(word);
             }
         }
-        //System.out.println("cat1 = " + product1 + "   cat2 = " + product2);
+        // System.out.println("cat1 = " + product1 + "   cat2 = " + product2);
         if (product1 > product2) {
             return 1;
         } else {
@@ -90,9 +99,9 @@ public class BayesianNetwork {
             }
         }
         if (mostDiscriminant.size() < number) {
-            return new LinkedList<String>(mostDiscriminant);
+            return new LinkedList<>(mostDiscriminant);
         } else {
-            return new LinkedList<String>(mostDiscriminant.subList(0, number));
+            return new LinkedList<>(mostDiscriminant.subList(0, number));
         }
     }
 }

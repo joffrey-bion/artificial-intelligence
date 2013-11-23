@@ -9,33 +9,43 @@ public class Factor {
     private Double[] values;
 
     public Factor(Variable... variables) {
-        if (variables.length == 0)
+        if (variables.length == 0) {
             throw new RuntimeException("the new factor must have variables");
+        }
         this.vars = new ArrayList<>();
-        for (Variable v : variables)
+        for (Variable v : variables) {
             this.vars.add(v);
+        }
         initValues();
     }
 
     public Factor(ArrayList<Variable> variables) {
-        if (variables.size() == 0)
+        if (variables.size() == 0) {
             throw new RuntimeException("the new factor must have variables");
+        }
         this.vars = new ArrayList<>();
         this.vars.addAll(variables);
         initValues();
     }
 
     /**
-     * Create a new factor which is copy of f.
+     * Create a new factor that is a copy of f.
+     * 
+     * @param f
+     *            The factor to copy
      */
     public Factor(Factor f) {
         this.vars = new ArrayList<>();
         this.vars.addAll(f.vars);
         this.values = new Double[f.values.length];
-        for (int i = 0; i < f.values.length; i++)
+        for (int i = 0; i < f.values.length; i++) {
             this.values[i] = f.values[i];
+        }
     }
 
+    /**
+     * Initialize {@link Double#NaN} values.
+     */
     private void initValues() {
         values = new Double[1 << vars.size()];
         for (int i = 0; i < values.length; i++) {
@@ -53,7 +63,8 @@ public class Factor {
     }
 
     /**
-     * Raises an exception if the variables in the assignment are not the same as in this factor.
+     * Raises an exception if the variables in the assignment are not the same as in
+     * this factor.
      */
     private void checkAssignmentVariables(Assignment a) {
         ArrayList<Variable> assignmentVars = a.getVariables();
@@ -120,7 +131,8 @@ public class Factor {
      * 
      * @param v
      *            The variable to sum out
-     * @return This factor, where the variable v has been summed out (and therefore removed).
+     * @return This factor, where the variable v has been summed out (and therefore
+     *         removed).
      */
     public Factor sumout(Variable v) {
         checkVariablePresence(v);
@@ -154,8 +166,8 @@ public class Factor {
      */
     public Factor normalize() {
         float sum = 0;
-        for (int i = 0; i < values.length; i++) {
-            sum += values[i];
+        for (Double value : values) {
+            sum += value;
         }
         for (int i = 0; i < values.length; i++) {
             values[i] /= sum;
@@ -166,23 +178,39 @@ public class Factor {
     /**
      * The static version of restrict(), which does not modify the factor f.
      * 
+     * @param f
+     *            The factor to restrict a copy of
+     * @param var
+     *            The variable to fix the value of
+     * @param value
+     *            The value of
+     * 
      * @return A new factor, the restricted version of f.
      */
-    public static Factor restrict(Factor f, Variable v, boolean value) {
-        return new Factor(f).restrict(v, value);
+    public static Factor restrict(Factor f, Variable var, boolean value) {
+        return new Factor(f).restrict(var, value);
     }
 
     /**
-     * The static version of sumout(), which does not modify the factor f.
+     * The static version of {@link #sumout(Variable)}, which does not modify the
+     * factor f.
+     * 
+     * @param f
+     *            The factor to sumout a copy of
+     * @param var
+     *            The variable to sum out
      * 
      * @return A new factor, the summed out version of f.
      */
-    public static Factor sumout(Factor f, Variable v) {
-        return new Factor(f).sumout(v);
+    public static Factor sumout(Factor f, Variable var) {
+        return new Factor(f).sumout(var);
     }
 
     /**
      * The static version of normalize(), which does not modify the factor f.
+     * 
+     * @param f
+     *            The factor to copy and normalize
      * 
      * @return A new factor, the normalized version of f.
      */
@@ -201,8 +229,8 @@ public class Factor {
      */
     public static Factor multiply(Factor f1, Factor f2) {
         // create a new factor with the variables of f1 and f2
-        ArrayList<Variable> commonVars = new ArrayList<Variable>();
-        ArrayList<Variable> mergedVars = new ArrayList<Variable>();
+        ArrayList<Variable> commonVars = new ArrayList<>();
+        ArrayList<Variable> mergedVars = new ArrayList<>();
         mergedVars.addAll(f1.vars);
         for (Variable v : f2.vars) {
             if (f1.vars.contains(v)) {
@@ -232,7 +260,8 @@ public class Factor {
     }
 
     /**
-     * Computes the product of all the factors. Does not modify them, neither the list.
+     * Computes the product of all the factors. Does not modify them, neither the
+     * list.
      * 
      * @param factors
      *            The terms of the product
@@ -260,12 +289,15 @@ public class Factor {
      * @param queryVariables
      *            The variables we want to see in the resulting factor
      * @param orderedHiddenVariables
-     *            A list of the other variables, in the order of their elimination. This list may
-     *            contain some variables contained in queryVariables and evidence, but these
-     *            variables will be ignored.
+     *            A list of the other variables, in the order of their elimination.
+     *            This list may contain some variables contained in queryVariables
+     *            and evidence, but these variables will be ignored.
      * @param evidence
      *            A list of variables which have been set to a value as evidence.
-     * @return The resulting normalized factor computed by the variable elimination algorithm.
+     * @param normalize
+     *            If {@code true}, the result is normalized.
+     * @return The resulting normalized factor computed by the variable elimination
+     *         algorithm.
      */
     public static Factor inference(LinkedList<Factor> factors, LinkedList<Variable> queryVariables,
             LinkedList<Variable> orderedHiddenVariables, LinkedList<Variable> evidence,
@@ -286,8 +318,9 @@ public class Factor {
         System.out.println("\nVariables summation:");
         for (Variable v : orderedHiddenVariables) {
             // skip query variables and evidence variables
-            if (queryVariables.contains(v) || evidence.contains(v))
+            if (queryVariables.contains(v) || evidence.contains(v)) {
                 continue;
+            }
             // find the factors containing the variable v
             affectedFactors.clear();
             for (Factor f : factors) {
@@ -295,8 +328,9 @@ public class Factor {
                     affectedFactors.add(f);
                 }
             }
-            if (affectedFactors.isEmpty())
+            if (affectedFactors.isEmpty()) {
                 continue;
+            }
             factors.removeAll(affectedFactors);
             // compute the product of all the factors containing v
             Factor product = multiply(affectedFactors);
@@ -308,8 +342,9 @@ public class Factor {
         // compute the product of all remaining factors
         Factor resultingFactor = multiply(factors);
         // normalization
-        if (normalize)
+        if (normalize) {
             resultingFactor.normalize();
+        }
         return resultingFactor;
     }
 
@@ -321,7 +356,8 @@ public class Factor {
      * @param factors
      *            The list to display.
      * @param full
-     *            Whether the full table of values should be displayed or just the variables.
+     *            Whether the full table of values should be displayed or just the
+     *            variables.
      */
     public static void printFactorsList(String title, LinkedList<Factor> factors, boolean full) {
         System.out.println(title);
@@ -351,6 +387,8 @@ public class Factor {
 
     /**
      * Returns a string representing this factor with all its values.
+     * 
+     * @return a string representing this factor with all its values.
      */
     public String toFullString() {
         String res = "";
@@ -366,9 +404,11 @@ public class Factor {
     /**
      * Returns a string representing this factor, function of its variables.
      */
+    @Override
     public String toString() {
-        if (vars.isEmpty())
+        if (vars.isEmpty()) {
             return "f(-)";
+        }
         String res = "f(";
         for (Variable v : vars) {
             res += v + ",";

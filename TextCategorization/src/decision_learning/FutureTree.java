@@ -29,7 +29,8 @@ public class FutureTree implements Comparable<FutureTree> {
      * @param branch
      *            The branch of the parent this node will be attached to.
      * @param examples
-     *            The subset of the training examples consistent with this future node.
+     *            The subset of the training examples consistent with this future
+     *            node.
      * @param words
      *            The subset of the words available for this future node.
      */
@@ -84,8 +85,8 @@ public class FutureTree implements Comparable<FutureTree> {
     }
 
     /**
-     * Force this future tree to become a leaf (category), using the mode of the underlying set of
-     * examples.
+     * Force this future tree to become a leaf (category), using the mode of the
+     * underlying set of examples.
      */
     public Tree toLeaf() {
         if (category != null) {
@@ -96,8 +97,8 @@ public class FutureTree implements Comparable<FutureTree> {
     }
 
     /**
-     * Convert this future tree into an actual Tree object. It can be an internal node as well as a
-     * leaf.
+     * Convert this future tree into an actual Tree object. It can be an internal
+     * node as well as a leaf.
      */
     public Tree toTree() {
         if (category != null) {
@@ -119,6 +120,7 @@ public class FutureTree implements Comparable<FutureTree> {
         }
     }
 
+    @Override
     public String toString() {
         if (category != null) {
             return "<" + category + "> IG = " + priority;

@@ -20,8 +20,9 @@ public class Variable {
     }
 
     public boolean getValue() {
-        if (!set)
+        if (!set) {
             throw new RuntimeException("accessing value of unset variable");
+        }
         return value;
     }
 
@@ -37,11 +38,11 @@ public class Variable {
     public boolean equals(Variable v) {
         return name.equals(v.name);
     }
-    
+
     /*
-     *  Methods for fancy printing 
+     * Methods for fancy printing
      */
-    
+
     public String toStringWithValue(boolean givenValue) {
         String res = "";
         if (!givenValue) {
@@ -59,6 +60,7 @@ public class Variable {
         }
     }
 
+    @Override
     public String toString() {
         return name;
     }

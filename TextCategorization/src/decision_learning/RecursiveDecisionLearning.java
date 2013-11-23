@@ -28,7 +28,7 @@ public class RecursiveDecisionLearning {
     public static Tree DTL(ArticleSet examples, Collection<String> words) {
         return DTL(examples, words, new Tree(data.Category.random()));
     }
-    
+
     private static Tree DTL(ArticleSet examples, Collection<String> words, Tree defaultTree) {
         if (examples.isEmpty()) {
             return defaultTree;

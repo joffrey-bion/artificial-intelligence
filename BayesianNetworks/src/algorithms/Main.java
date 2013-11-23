@@ -27,23 +27,23 @@ public class Main {
         System.out.println("======= " + text + " =======");
     }
 
-    public static Factor query(LinkedList<Variable> queryVariables, LinkedList<Variable> evidence) {
-        return query(queryVariables, evidence, true);
+    public static Factor query() {
+        return query(true);
     }
-    
-    public static Factor query(LinkedList<Variable> queryVariables, LinkedList<Variable> evidence, boolean normalize) {
+
+    public static Factor query(boolean normalize) {
         LinkedList<Factor> factorsCopy = new LinkedList<>();
         for (Factor f : factors) {
             factorsCopy.add(new Factor(f));
         }
         return Factor.inference(factorsCopy, queryVariables, orderedVariables, evidence, normalize);
     }
-    
+
     public static void main(String args[]) {
 
         // the factors and variable elimination order will not change
         setOrderedVariables(Trav, FP, Fraud, IP, OC, CRP);
-        factors = generateCreditCardProblemFactors();
+        generateCreditCardProblemFactors();
         // other initializations
         queryVariables = new LinkedList<>();
         evidence = new LinkedList<>();
@@ -52,7 +52,7 @@ public class Main {
         answer("2.b. Prior proba");
         initInferenceListsAndVars();
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud):", result);
 
         answer("2.b. Proba with evidence");
@@ -64,7 +64,7 @@ public class Main {
         evidence.add(IP);
         evidence.add(CRP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | fp, ~ip, crp):", result);
 
         answer("2.c. Proba with more evidence");
@@ -78,11 +78,11 @@ public class Main {
         evidence.add(CRP);
         evidence.add(Trav);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | fp, ~ip, crp, trav):", result);
 
         answer("2.d. Comparison");
-        
+
         initInferenceListsAndVars();
         IP.set(true);
         CRP.set(false);
@@ -91,7 +91,7 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ip, ~crp, ~fp):", result);
 
         initInferenceListsAndVars();
@@ -102,7 +102,7 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ip, crp, ~fp):", result);
 
         initInferenceListsAndVars();
@@ -113,7 +113,7 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ip, ~crp, fp):", result);
 
         initInferenceListsAndVars();
@@ -124,9 +124,9 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ip, crp, fp):", result);
-        
+
         initInferenceListsAndVars();
         IP.set(true);
         CRP.set(true);
@@ -137,9 +137,9 @@ public class Main {
         evidence.add(FP);
         evidence.add(Trav);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ip, crp, fp, trav):", result);
-        
+
         initInferenceListsAndVars();
         IP.set(false);
         CRP.set(false);
@@ -148,7 +148,7 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ~ip, ~crp, ~fp):", result);
 
         initInferenceListsAndVars();
@@ -159,12 +159,12 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Fraud);
-        result = query(queryVariables, evidence);
+        result = query();
         printFactor("\nP(Fraud | ~ip, crp, ~fp):", result);
-        
+
         answer("3.b");
         setOrderedVariables(Trav, FP, Fraud, IP, OC, CRP);
-        factors = generateCreditCardProblemFactors();
+        generateCreditCardProblemFactors();
         Variable Block = new Variable("Block");
         Factor U = new Factor(Fraud, Block);
         factors.add(U);
@@ -172,12 +172,12 @@ public class Main {
         U.setValue(-1000, true, false);
         U.setValue(-10, false, true);
         U.setValue(5, false, false);
-        
+
         initInferenceListsAndVars();
         queryVariables.add(Block);
-        result = query(queryVariables, evidence, false);
+        result = query(false);
         printFactor("\nEU(Block):", result);
-          
+
         initInferenceListsAndVars();
         IP.set(false);
         CRP.set(true);
@@ -186,9 +186,9 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Block);
-        result = query(queryVariables, evidence, false);
+        result = query(false);
         printFactor("\nEU(Block | ~ip, crp, fp):", result);
-        
+
         initInferenceListsAndVars();
         IP.set(false);
         CRP.set(true);
@@ -199,9 +199,9 @@ public class Main {
         evidence.add(FP);
         evidence.add(Trav);
         queryVariables.add(Block);
-        result = query(queryVariables, evidence, false);
+        result = query(false);
         printFactor("\nEU(Block | ~ip, crp, fp, trav):", result);
-        
+
         initInferenceListsAndVars();
         IP.set(false);
         CRP.set(true);
@@ -212,11 +212,11 @@ public class Main {
         evidence.add(FP);
         evidence.add(Trav);
         queryVariables.add(Block);
-        result = query(queryVariables, evidence, false);
+        result = query(false);
         printFactor("\nEU(Block | ~ip, crp, fp, ~trav):", result);
-        
+
         answer("3.c");
-        
+
         Variable Call = new Variable("Call");
         Factor newU = new Factor(Fraud, Trav, Call);
         factors.remove(U);
@@ -237,7 +237,7 @@ public class Main {
         evidence.add(CRP);
         evidence.add(FP);
         queryVariables.add(Call);
-        result = query(queryVariables, evidence, false);
+        result = query(false);
         printFactor("\nEU(Call | ~ip, crp, fp):", result);
         System.out.println("EVI = " + (result.getValue(true) - result.getValue(false)));
     }
@@ -256,12 +256,12 @@ public class Main {
 
     private static void setOrderedVariables(Variable... vars) {
         orderedVariables = new LinkedList<>();
-        for (int i = 0; i < vars.length; i++) {
-            orderedVariables.add(vars[i]);
+        for (Variable var : vars) {
+            orderedVariables.add(var);
         }
     }
 
-    private static LinkedList<Factor> generateCreditCardProblemFactors() {
+    private static void generateCreditCardProblemFactors() {
         Factor factorTrav = new Factor(Trav);
         factorTrav.setValue(0.05, true);
         factorTrav.setValue(0.95, false);
@@ -308,13 +308,11 @@ public class Main {
         factorCRP.setValue(0.999, false, false);
         printFactor("P(CRP | OC):", factorOC);
 
-        LinkedList<Factor> factors = new LinkedList<>();
         factors.add(factorFraud);
         factors.add(factorTrav);
         factors.add(factorOC);
         factors.add(factorIP);
         factors.add(factorFP);
         factors.add(factorCRP);
-        return factors;
     }
 }

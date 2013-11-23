@@ -4,8 +4,8 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
- * The priority queue used by the decision learning. It is intended to make its instantiation
- * simpler and more abstract.
+ * The priority queue used by the decision learning. It is intended to make its
+ * instantiation simpler and more abstract.
  */
 @SuppressWarnings("serial")
 public class FutureTreeQueue extends PriorityQueue<FutureTree> {
@@ -13,7 +13,8 @@ public class FutureTreeQueue extends PriorityQueue<FutureTree> {
     private static class TreeComparator implements Comparator<FutureTree> {
         @Override
         public int compare(FutureTree o1, FutureTree o2) {
-            return o2.compareTo(o1); // reversed to have the largest element at the head of the list
+            return o2.compareTo(o1); // reversed to have the largest element at the
+                                     // head of the list
         }
     }
 
@@ -21,13 +22,15 @@ public class FutureTreeQueue extends PriorityQueue<FutureTree> {
         super(10, new TreeComparator());
     }
 
+    @Override
     public String toString() {
         PriorityQueue<FutureTree> copy = new PriorityQueue<FutureTree>(this);
         String res = "[";
         while (!copy.isEmpty()) {
             res += "" + copy.poll();
-            if (!copy.isEmpty())
+            if (!copy.isEmpty()) {
                 res += ", ";
+            }
         }
         return res + "]";
     }

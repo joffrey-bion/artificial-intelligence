@@ -3,7 +3,9 @@ package UnitTests;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import math.*;
+import math.Assignment;
+import math.Factor;
+import math.Variable;
 
 public class UnitTest {
 
@@ -40,7 +42,7 @@ public class UnitTest {
         System.out.println("a1 = [" + a1 + "]");
         a1.removeVariable(c);
         System.out.println("a1 = [" + a1 + "] (C removed)");
-        
+
         Assignment a2 = new Assignment(list2, false, true, true);
         System.out.println("a2 = [" + a2 + "]");
         System.out.println("a1 U a2 = [" + Assignment.merge(a1, a2) + "]");
@@ -61,14 +63,13 @@ public class UnitTest {
         printFactor("factor F:", F);
         printFactor("factor G:", G);
         printFactor("factor F x G:", Factor.multiply(F, G));
-        
-        
+
         Factor f1 = new Factor(a);
         f1.setValue(0.9, true);
         f1.setValue(0.1, false);
         printFactor("f1(A):", f1);
         printFactor("f1(A) restricted to A=a:", Factor.restrict(f1, a, true));
-        printFactor("f1(A)|A=a * f1(A) :", Factor.multiply(f1,Factor.restrict(f1, a, true)));
+        printFactor("f1(A)|A=a * f1(A) :", Factor.multiply(f1, Factor.restrict(f1, a, true)));
 
         Factor f2 = new Factor(a, b);
         f2.setValue(0.9, true, true);
@@ -83,7 +84,7 @@ public class UnitTest {
         f3.setValue(0.2, true, false);
         f3.setValue(0.8, false, false);
         printFactor("f3(B,C):", f3);
-        
+
         LinkedList<Factor> factors = new LinkedList<>();
         LinkedList<Variable> orderedVariables = new LinkedList<>();
         LinkedList<Variable> queryVariables = new LinkedList<>();

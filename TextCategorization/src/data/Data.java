@@ -29,8 +29,8 @@ public class Data {
 
     /**
      * Parse the words given in the file located at {@code path}. <br>
-     * The file must be a list of words, one on each line, the line number being the ID of the word,
-     * starting at 1.
+     * The file must be a list of words, one on each line, the line number being the
+     * ID of the word, starting at 1.
      * 
      * @param path
      *            The path where to find the file to parse.
@@ -52,8 +52,8 @@ public class Data {
 
     /**
      * Parse the articles given in the file located at {@code path}. <br>
-     * The file must be a succession of integers, making sense by pairs, a document ID followed by a
-     * word ID. These integers may be on different lines.
+     * The file must be a succession of integers, making sense by pairs, a document
+     * ID followed by a word ID. These integers may be on different lines.
      * 
      * @param path
      *            The path where to find the file to parse.
@@ -77,10 +77,10 @@ public class Data {
     }
 
     /**
-     * Parse the categories given in the file located at {@code path}, and update the category of
-     * the given articles. <br>
-     * The file must be a list of category IDs, one on each line, the line number being the ID of
-     * the document it describes, starting at 1.
+     * Parse the categories given in the file located at {@code path}, and update the
+     * category of the given articles. <br>
+     * The file must be a list of category IDs, one on each line, the line number
+     * being the ID of the document it describes, starting at 1.
      * 
      * @param articles
      *            The articles
@@ -108,6 +108,7 @@ public class Data {
     /**
      * Returns a String representing all the data in this object.
      */
+    @Override
     public String toString() {
         String res = "Words:\n";
         for (Integer key : words.keySet()) {

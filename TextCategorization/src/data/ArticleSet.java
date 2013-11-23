@@ -4,31 +4,30 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import bayesian_learning.BayesianNetwork;
-
 import decision_learning.Tree;
 
 /**
- * Represents a set of articles which cannot be modified. Some methods results are buffered to
- * improve the efficiency.
+ * Represents a set of articles which cannot be modified. Some methods results are
+ * buffered to improve the efficiency.
  */
 public class ArticleSet {
 
-    public static int remaindersBufferUse = 0; 
-    
+    public static int remaindersBufferUse = 0;
+
     private LinkedList<Article> articles;
 
     // buffers
     private Double entropy;
-    private int categoryCount[];
-    private ArticleSet categoryPartition[];
+    private int categoriesCounts[];
+    private ArticleSet categoriesPartitions[];
     private HashMap<String, Double> remaindersBuffer;
 
     private ArticleSet() {
         this.articles = new LinkedList<>();
         // initialize buffers
         this.entropy = null;
-        this.categoryCount = null;
-        this.categoryPartition = null;
+        this.categoriesCounts = null;
+        this.categoriesPartitions = null;
         this.remaindersBuffer = new HashMap<>();
     }
 
@@ -52,52 +51,51 @@ public class ArticleSet {
     }
 
     /**
-     * Partition this set of articles into 2 subsets according to whether the articles are from
-     * category 1 or 2.
+     * Partition this set of articles into 2 subsets according to whether the
+     * articles are from category 1 or 2.
      * 
-     * @return An array t[], t[0] being the articles of category 1 and t[1] the articles of category
-     *         2.
+     * @return An array t[], t[0] being the articles of category 1 and t[1] the
+     *         articles of category 2.
      */
-    public ArticleSet[] categoryPartition() {
-        if (categoryPartition != null)
-            return categoryPartition;
-        categoryPartition = new ArticleSet[2];
-        categoryPartition[0] = new ArticleSet();
-        categoryPartition[1] = new ArticleSet();
-        for (Article a : articles) {
-            categoryPartition[a.getCategory() - 1].articles.add(a);
+    public ArticleSet[] getCategoryPartition() {
+        if (categoriesPartitions == null) {
+            categoriesPartitions = new ArticleSet[2];
+            categoriesPartitions[0] = new ArticleSet();
+            categoriesPartitions[1] = new ArticleSet();
+            for (Article a : articles) {
+                categoriesPartitions[a.getCategory() - 1].articles.add(a);
+            }
         }
-        return categoryPartition;
+        return categoriesPartitions;
     }
 
     /**
      * Returns the number of articles for each category.
      * 
-     * @return An array t[] of these numbers, t[0] being the number of articles of category 1 and
-     *         t[1] the number of articles of category 2.
+     * @return An array t[] of the number of articles for each category, t[0] being
+     *         the number of articles of category 1 and t[1] the number of articles
+     *         of category 2.
      */
-    public int[] categoryCount() {
-        if (categoryCount != null)
-            return categoryCount;
-        categoryCount = new int[] { 0, 0 };
-        categoryCount[0] = categoryPartition()[0].size();
-        ;
-        categoryCount[1] = categoryPartition()[1].size();
-        ;
-        return categoryCount;
+    public int[] getCategoriesCounts() {
+        if (categoriesCounts == null) {
+            categoriesCounts = new int[] { 0, 0 };
+            categoriesCounts[0] = getCategoryPartition()[0].size();
+            categoriesCounts[1] = getCategoryPartition()[1].size();
+        }
+        return categoriesCounts;
     }
 
     /**
-     * Returns the id of the common category if all articles in this set are from the same category,
-     * {@code null} otherwise.
+     * @return the id of the common category if all articles in this set are from the
+     *         same category, {@code null} otherwise.
      */
     public Integer commonCategory() {
-        if (articles.isEmpty())
+        if (articles.isEmpty()) {
             throw new RuntimeException("Cannot check the category of an empty list of articles");
-        int categoryCount[] = categoryCount();
-        if (categoryCount[0] == 0) {
+        }
+        if (getCategoriesCounts()[0] == 0) {
             return 2;
-        } else if (categoryCount[1] == 0) {
+        } else if (getCategoriesCounts()[1] == 0) {
             return 1;
         } else {
             return null;
@@ -105,15 +103,15 @@ public class ArticleSet {
     }
 
     /**
-     * Returns the id of the most popular category among this set of articles.
+     * @return the id of the most popular category among this set of articles.
      */
     public int mode() {
-        if (articles.isEmpty())
+        if (articles.isEmpty()) {
             throw new RuntimeException("Cannot get the mode of an empty list of articles");
-        int categoryCount[] = categoryCount();
-        if (categoryCount[0] > categoryCount[1]) {
+        }
+        if (getCategoriesCounts()[0] > getCategoriesCounts()[1]) {
             return 1;
-        } else if (categoryCount[0] < categoryCount[1]) {
+        } else if (getCategoriesCounts()[0] < getCategoriesCounts()[1]) {
             return 2;
         } else {
             return Category.random();
@@ -121,6 +119,7 @@ public class ArticleSet {
     }
 
     private static final double log2 = Math.log(2);
+
     /**
      * Returns the entropy of a distribution of probabilities.
      * 
@@ -139,26 +138,36 @@ public class ArticleSet {
     }
 
     /**
-     * Return the entropy of this set of articles.
+     * @return the entropy of this set of articles.
      */
     public double entropy() {
-        if (entropy != null)
+        if (entropy != null) {
             return entropy;
-        if (articles.size() == 0)
+        }
+        if (articles.size() == 0) {
             return 0;
-        int counts[] = categoryCount();
-        double p1 = (double) counts[0] / (double) articles.size();
-        double p2 = (double) counts[1] / (double) articles.size();
+        }
+        double p1 = (double) getCategoriesCounts()[0] / (double) articles.size();
+        double p2 = (double) getCategoriesCounts()[1] / (double) articles.size();
         entropy = I(p1, p2);
         return entropy;
     }
 
     /**
-     * Return the remainder of this set of articles.
+     * Returns the remainder of this set of articles for the specified word. It
+     * corresponds to the weighed average of the entropy of the 2 subsets returned by
+     * {@link #partition(String)}.
+     * 
+     * @param word
+     *            The word used to partition this set into 2 subsets.
+     * 
+     * @return the remainder of this set of articles for the specified word
+     * @see #partition(String)
      */
     public double remainder(String word) {
-        if (word == null)
+        if (word == null) {
             throw new IllegalArgumentException("word cannot be null");
+        }
         if (remaindersBuffer.containsKey(word)) {
             remaindersBufferUse++;
             return remaindersBuffer.get(word);
@@ -174,17 +183,18 @@ public class ArticleSet {
     }
 
     /**
-     * Partition this set of articles into 2 subsets according to whether they contain the word
-     * wordId or not.
+     * Partition this set of articles into 2 subsets according to whether they
+     * contain {@code word} or not.
      * 
      * @param word
      *            The word used to divide the set.
-     * @return An array of 2 ArticleSet, index 0 for the articles containing the word, 1 for those
-     *         which does not.
+     * @return An array of 2 ArticleSet, index 0 for the articles containing the
+     *         word, 1 for those which do not.
      */
     public ArticleSet[] partition(String word) {
-        if (word == null)
+        if (word == null) {
             throw new IllegalArgumentException("word cannot be null");
+        }
         ArticleSet subsets[] = { new ArticleSet(), new ArticleSet() };
         for (Article a : articles) {
             if (a.contains(word)) {
@@ -197,10 +207,12 @@ public class ArticleSet {
     }
 
     /**
-     * Use the given decision tree to determine the category of each article in this set.
+     * Use the given decision tree to determine the category of each article in this
+     * set.
      * 
      * @param decisionTree
-     *            The decision tree used to decide which category each article belongs to
+     *            The decision tree used to decide which category each article
+     *            belongs to
      * @return The percentage of success.
      */
     public Double test(Tree decisionTree) {
@@ -214,10 +226,12 @@ public class ArticleSet {
     }
 
     /**
-     * Use the given Bayesian network to determine the category of each article in this set.
+     * Use the given Bayesian network to determine the category of each article in
+     * this set.
      * 
      * @param bn
-     *            The Bayesian network used to decide which category each article belongs to
+     *            The Bayesian network used to decide which category each article
+     *            belongs to
      * @return The percentage of success.
      */
     public Double test(BayesianNetwork bn) {

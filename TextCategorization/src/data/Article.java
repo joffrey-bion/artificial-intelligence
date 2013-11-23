@@ -10,7 +10,7 @@ public class Article {
 
     public Article(int id) {
         this.id = id;
-        this.words = new HashSet<String>();
+        this.words = new HashSet<>();
         this.category = 0;
     }
 
@@ -27,11 +27,13 @@ public class Article {
     }
 
     public int getCategory() {
-        if (category == 0)
+        if (category == 0) {
             throw new RuntimeException("The category of article " + id + " has not been set");
+        }
         return category;
     }
 
+    @Override
     public String toString() {
         return "art." + id + " (" + Category.getName(category) + ")";
     }

@@ -3,7 +3,7 @@ package data;
 import java.util.Random;
 
 public class Category {
-    
+
     private static Random gen = new Random();
 
     /**
@@ -25,6 +25,8 @@ public class Category {
 
     /**
      * Returns a random category id.
+     * 
+     * @return a random category id.
      */
     public static int random() {
         return gen.nextInt(2) + 1;

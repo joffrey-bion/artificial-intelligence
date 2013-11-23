@@ -28,8 +28,9 @@ public class Assignment {
         this.vars = new ArrayList<>();
         this.vars.addAll(vars);
         values = new boolean[vars.size()];
-        if (vars.size() == 0)
+        if (vars.size() == 0) {
             return; // empty assignment for a constant factor in this case
+        }
         String binary = Integer.toBinaryString(index);
         for (int i = 0; i < binary.length(); i++) {
             values[i] = binary.charAt(binary.length() - i - 1) == '1';
@@ -56,6 +57,8 @@ public class Assignment {
 
     /**
      * Converts this assignment into a decimal index for a factor's table.
+     * 
+     * @return a decimal index corresponding to this assignment
      */
     public int toIndex() {
         return toIndex(values);
@@ -78,6 +81,10 @@ public class Assignment {
 
     /**
      * Converts a boolean table (binary representation) into a decimal index.
+     * 
+     * @param assignment
+     *            The assignment to convert into an index
+     * @return the index corresponding to the specified statement
      */
     public static int toIndex(boolean assignment[]) {
         int index = 0;
@@ -90,12 +97,18 @@ public class Assignment {
     }
 
     /**
-     * Merge the two assignments into one, without repetition of the variables. Does not check
-     * whether the assignments are consistent together or not (i.e. same value for the same
-     * variable).
+     * Merge the two assignments into one, without repetition of the variables. Does
+     * not check whether the assignments are consistent together or not (i.e. same
+     * value for the same variable).
+     * 
+     * @param a1
+     *            The source assignment 1
+     * @param a2
+     *            The source assignment 2
+     * @return The resulting merged assignment
      */
     public static Assignment merge(Assignment a1, Assignment a2) {
-        ArrayList<Variable> mergedVars = new ArrayList<Variable>();
+        ArrayList<Variable> mergedVars = new ArrayList<>();
         mergedVars.addAll(a1.vars);
         for (Variable v : a2.vars) {
             if (!a1.vars.contains(v)) {
@@ -117,6 +130,10 @@ public class Assignment {
 
     /**
      * Returns a list of all possible assignments for a given list of variables.
+     * 
+     * @param vars
+     *            The list of variables to get an assignment for
+     * @return The list of all possible assignments for the specified variables
      */
     public static LinkedList<Assignment> assignments(ArrayList<Variable> vars) {
         LinkedList<Assignment> set = new LinkedList<>();
@@ -144,6 +161,7 @@ public class Assignment {
         return res;
     }
 
+    @Override
     public String toString() {
         return toString(false);
     }
